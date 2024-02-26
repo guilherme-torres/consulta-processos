@@ -1,5 +1,6 @@
 from lxml import etree
 from zeep import Client
+from requests.exceptions import RequestException
 
 def extrair_xml(response_data):
     start_index = response_data.find('<soap:Envelope')
@@ -20,10 +21,13 @@ def consultar_processo(id_consultante, senha_consultante, numero_processo, grau=
     client = Client(wsdl=wsdl)
 
     with client.settings(raw_response=True, strict=False):
-        response = client.service.consultarProcesso(
-            id_consultante, senha_consultante, numero_processo
-        )
-        content = extrair_xml(str(response.content))
+        try:
+            response = client.service.consultarProcesso(
+                id_consultante, senha_consultante, numero_processo
+            )
+            content = extrair_xml(str(response.content))
+        except RequestException as e:
+            print(f'Erro de conexão: {e}')
 
     if not validar_xml(content):
         return False
