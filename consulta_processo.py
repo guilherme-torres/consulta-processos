@@ -10,9 +10,8 @@ class ConsultaProcesso:
         self.grau = grau
 
 
-    def __extrair_xml(self, response_data):
-        start_index = response_data.find('<soap:Envelope')
-        stop = '</soap:Envelope>'
+    def __extrair_xml(self, response_data, start, stop):
+        start_index = response_data.find(start)
         stop_index = response_data.find(stop) + len(stop)
         xml = response_data[start_index:stop_index]
         return xml
@@ -33,7 +32,7 @@ class ConsultaProcesso:
                     self.id_consultante, self.senha_consultante, self.numero_processo,
                     incluirCabecalho=True, movimentos=True, incluirDocumentos=True
                 )
-                content = self.__extrair_xml(str(response.content))
+                content = self.__extrair_xml(str(response.text), start='<soap:Envelope', stop='</soap:Envelope>')
             except RequestException as e:
                 print(f'Erro de conexão: {e}')
                 return False
@@ -44,15 +43,26 @@ class ConsultaProcesso:
 
 
     def dados_basicos(self):
-        processo = self.consultar_processo()
-        dados_processo = etree.fromstring(processo)
-        # for dado in dados_processo.findall('dadosBasicos'):
-        #     print(dado.attrib)
+        dados_processo = self.consultar_processo()
+        tree = etree.fromstring(dados_processo)
+        dados_basicos = tree[0][0][2][0].iter()
+        dados = dict()
+        for d in dados_basicos:
+            key = ''.join(d.tag.split('}')[1])
+            dados[key] = d.attrib
+            if d.attrib == {}:
+                dados[key] = d.text
+            # print(d.tag, d.attrib, d.text)
+        return dados
 
 
     def movimentos(self):
-        pass
+        dados_processo = self.consultar_processo()
+        tree = etree.fromstring(dados_processo)
+        return tree
 
 
     def documentos(self):
-        pass
+        dados_processo = self.consultar_processo()
+        tree = etree.fromstring(dados_processo)
+        return tree

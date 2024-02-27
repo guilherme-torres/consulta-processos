@@ -7,5 +7,6 @@ load_dotenv()
 ID_CONSULTANTE = os.environ['ID_CONSULTANTE']
 SENHA_CONSULTANTE = os.environ['SENHA_CONSULTANTE']
 
-numero_processo = '1234'
-ConsultaProcesso(ID_CONSULTANTE, SENHA_CONSULTANTE, numero_processo).dados_basicos()
+numero_processo = ''
+dados_processo = ConsultaProcesso(ID_CONSULTANTE, SENHA_CONSULTANTE, numero_processo).dados_basicos()
+print(dados_processo)
