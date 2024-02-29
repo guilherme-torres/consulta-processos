@@ -38,7 +38,7 @@ class ConsultaProcesso:
                 dict_element[key] = self.__xml_para_dict(child)
         return dict_element
 
-    def consultar_processo(self):
+    def __consultar_processo(self):
         wsdl = f'https://pje.tjpi.jus.br/{self.grau}g/intercomunicacao?wsdl'
         client = Client(wsdl=wsdl)
         with client.settings(raw_response=True, strict=False):
@@ -58,18 +58,27 @@ class ConsultaProcesso:
 
 
     def dados_basicos(self):
-        dados_processo = self.consultar_processo()
+        dados_processo = self.__consultar_processo()
         root = ET.fromstring(dados_processo)
-        return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['dadosBasicos']
+        try:
+            return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['dadosBasicos']
+        except KeyError:
+            return False
 
 
     def movimentos(self):
-        dados_processo = self.consultar_processo()
+        dados_processo = self.__consultar_processo()
         root = ET.fromstring(dados_processo)
-        return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['movimento']
+        try:
+            return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['movimento']
+        except KeyError:
+            return False
 
 
     def documentos(self):
-        dados_processo = self.consultar_processo()
+        dados_processo = self.__consultar_processo()
         root = ET.fromstring(dados_processo)
-        return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['documento']
+        try:
+            return self.__xml_para_dict(root)['Body']['consultarProcessoResposta']['processo']['documento']
+        except KeyError:
+            return False
