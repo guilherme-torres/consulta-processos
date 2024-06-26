@@ -7,6 +7,6 @@ load_dotenv()
 ID_CONSULTANTE = os.environ['ID_CONSULTANTE']
 SENHA_CONSULTANTE = os.environ['SENHA_CONSULTANTE']
 
-numero_processo = '1234'
-dados_processo = ConsultaProcesso(ID_CONSULTANTE, SENHA_CONSULTANTE, numero_processo).dados_basicos()
-print(dados_processo)
+numero_processo = ''
+documentos_id = ConsultaProcesso(ID_CONSULTANTE, SENHA_CONSULTANTE, numero_processo).get_documents_id()
+ConsultaProcesso(ID_CONSULTANTE, SENHA_CONSULTANTE, numero_processo).download_attachments(documentos_id)
